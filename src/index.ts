@@ -47,6 +47,7 @@ const SCRAPE_TOOL: Tool = {
             'extract',
           ],
         },
+        default: ['markdown'],
         description: "Content formats to extract (default: ['markdown'])",
       },
       onlyMainContent: {
@@ -995,14 +996,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const { url, ...options } = args;
         try {
           const scrapeStartTime = Date.now();
+         
+          if (!options.formats || options.formats.length === 0) {
+            options.formats = ['markdown'];
+          }
           safeLog(
             'info',
             `Starting scrape for URL: ${url} with options: ${JSON.stringify(options)}`
           );
-
           //@ts-ignore
           const response = await client.scrapeUrl(url, { ...options, origin: 'mcp-server' });
-
+          safeLog(
+            'info',
+            JSON.stringify(response, null, 2)
+          );
           // Log performance metrics
           safeLog(
             'info',
