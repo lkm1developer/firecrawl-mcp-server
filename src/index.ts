@@ -996,7 +996,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             `Starting scrape for URL: ${url} with options: ${JSON.stringify(options)}`
           );
 
-          const response = await client.scrapeUrl(url, options);
+          //@ts-ignore
+          const response = await client.scrapeUrl(url, { ...options, origin: 'mcp-server' });
 
           // Log performance metrics
           safeLog(
@@ -1066,7 +1067,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           throw new Error('Invalid arguments for firecrawl_map');
         }
         const { url, ...options } = args;
-        const response = await client.mapUrl(url, options);
+        //@ts-ignore
+        const response = await client.mapUrl(url, { ...options, origin: 'mcp-server' });
         if ('error' in response) {
           throw new Error(response.error);
         }
@@ -1173,9 +1175,9 @@ ${
           throw new Error('Invalid arguments for firecrawl_crawl');
         }
         const { url, ...options } = args;
-
         const response = await withRetry(
-          async () => client.asyncCrawlUrl(url, options),
+          //@ts-ignore
+          async () => client.asyncCrawlUrl(url, { ...options, origin: 'mcp-server' }),
           'crawl operation'
         );
 
@@ -1229,7 +1231,7 @@ ${
         }
         try {
           const response = await withRetry(
-            async () => client.search(args.query, args),
+            async () => client.search(args.query, { ...args, origin: 'mcp-server' }),
             'search operation'
           );
 
@@ -1385,6 +1387,8 @@ ${result.markdown ? `\nContent:\n${result.markdown}` : ''}`
               maxDepth: args.maxDepth as number,
               timeLimit: args.timeLimit as number,
               maxUrls: args.maxUrls as number,
+              //@ts-ignore
+              origin: 'mcp-server',
             },
             // Activity callback
             (activity) => {
@@ -1451,7 +1455,8 @@ ${result.markdown ? `\nContent:\n${result.markdown}` : ''}`
 
           // Start the generation process
           const response = await withRetry(
-            async () => client.generateLLMsText(url, params),
+            //@ts-ignore
+            async () => client.generateLLMsText(url, { ...params, origin: 'mcp-server' }),
             'LLMs.txt generation'
           );
 
