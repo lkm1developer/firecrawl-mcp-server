@@ -640,7 +640,11 @@ interface SearchOptions {
     formats?: string[];
     onlyMainContent?: boolean;
     waitFor?: number;
-  };
+    includeTags?: string[];
+    excludeTags?: string[];
+    timeout?: number;
+  },
+ 
 }
 
 // Add after other interfaces
